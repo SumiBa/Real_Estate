@@ -11,30 +11,25 @@ const PricingPlans = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true); // State for tracking fetch loading
 
-  useEffect(() => {
-    fetch("https://308e-65-2-130-99.ngrok-free.app/get_properties.php")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.statusText}`);
-        }
-        
-        const contentType = response.headers.get("Content-Type");
-        if (contentType && contentType.includes("application/json")) {
-          return response.json(); // Only parse as JSON if the content type is correct
-        } else {
-          throw new Error("Expected JSON response, but received " + contentType);
-        }
-      })
-      .then((data) => {
-        console.log("Fetched Data: ", data); // Debug here to inspect the response
-        setProperties(data); // Update state with the fetched properties
-        setFetching(false); // Stop loading indicator once data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching properties:", error); // Log the error
-        setFetching(false); // Stop loading indicator if error occurs
-      });
-  }, []);
+ useEffect(() => {
+  fetch("https://308e-65-2-130-99.ngrok-free.app/get_properties.php")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("Fetched Data: ", data); // Debug here to inspect the response
+      setProperties(data);
+    })
+    .catch((R) => {
+      console.error("Error fetching properties:", R.message || R); // Logs the error message
+      if (R.stack) {
+        console.error("Error stack:", R.stack); // Logs the stack trace if available
+      }
+    });
+}, []);
 
   const handleSubmit = async (e, propertyId) => {
     e.preventDefault();
