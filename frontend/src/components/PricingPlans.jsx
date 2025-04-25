@@ -10,7 +10,7 @@ const PricingPlans = () => {
   });
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    fetch("http://65.2.130.99/get_properties.php")
+    fetch("https://3589-65-2-130-99.ngrok-free.app/get_properties.php")
       .then((response) => response.json()) 
       .then((data) => setProperties(data))
       .catch((error) => console.error("Error fetching properties:", error));
@@ -26,7 +26,7 @@ const PricingPlans = () => {
     };
 
     try {
-      const response = await fetch("http://65.2.130.99/submit_enquiry.php", {
+      const response = await fetch("https://3589-65-2-130-99.ngrok-free.app/submit_enquiry.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
