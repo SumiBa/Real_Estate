@@ -27,7 +27,7 @@ const ContactForm = () => {
         setErrorMessage("");
 
         try {
-            const response = await fetch("http://13.203.202.228:8000/contact.php", {
+            const response = await fetch("http://65.2.130.99/contact.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
