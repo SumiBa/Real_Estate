@@ -9,25 +9,37 @@ const PricingPlans = () => {
     message: "",
   });
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true); // State for tracking fetch loading
+
   useEffect(() => {
-  fetch("https://308e-65-2-130-99.ngrok-free.app/get_properties.php")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const contentType = response.headers.get("Content-Type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error("Expected JSON, but received " + contentType);
-      }
-      return response.json();
-    })
-    .then((data) => setProperties(data))
-    .catch((error) => console.error("Error fetching properties:", error));
-}, []);
+    setFetching(true);
+    fetch("https://308e-65-2-130-99.ngrok-free.app/get_properties.php")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Expected JSON, but received " + contentType);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data.length === 0) {
+          console.warn("No properties found.");
+        }
+        setProperties(data);
+        setFetching(false); // Stop loading after data is fetched
+      })
+      .catch((error) => {
+        console.error("Error fetching properties:", error);
+        setFetching(false); // Stop loading if there is an error
+      });
+  }, []);
 
   const handleSubmit = async (e, propertyId) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
 
     const payload = {
       ...formData,
@@ -49,10 +61,10 @@ const PricingPlans = () => {
       // Resetting form and hide loading
       setFormData({ name: "", email: "", message: "" });
       setShowFormIndex(null);
-      setLoading(false);  // Hiding loading state
+      setLoading(false); // Hiding loading state
     } catch (error) {
       console.error("Submission failed:", error);
-      setLoading(false);  // Hiding loading state if error occurs
+      setLoading(false); // Hiding loading state if error occurs
     }
   };
 
@@ -60,85 +72,91 @@ const PricingPlans = () => {
     <section id="pricing" className="py-8 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 text-center">
         <h2 className="text-3xl font-bold text-blue-700 mb-8">Pricing Plans</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {properties.map((property, index) => (
-            <div
-              key={property.id}
-              className="bg-white rounded-lg shadow-lg p-6 flex flex-col"
-            >
-              <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                {property.title}
-              </h3>
-              <img
-                src={property.image_url || "https://via.placeholder.com/600"}
-                alt={property.title}
-                className="w-full h-64 object-cover rounded-lg mb-4"
-              />
-              <p className="text-gray-700 mb-4">
-                Starting from ₹{(property.price / 10000000).toFixed(2)} Cr*
-              </p>
-              <ul className="text-left text-gray-600 mb-4">
-                {property.features.split(",").map((feature, i) => (
-                  <li key={i}>{feature.trim()}</li>
-                ))}
-              </ul>
+        
+        {/* Show loading message while fetching properties */}
+        {fetching ? (
+          <div>Loading properties...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {properties.map((property, index) => (
+              <div
+                key={property.id}
+                className="bg-white rounded-lg shadow-lg p-6 flex flex-col"
+              >
+                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                  {property.title}
+                </h3>
+                <img
+                  src={property.image_url || "https://via.placeholder.com/600"}
+                  alt={property.title}
+                  className="w-full h-64 object-cover rounded-lg mb-4"
+                />
+                <p className="text-gray-700 mb-4">
+                  Starting from ₹{(property.price / 10000000).toFixed(2)} Cr*
+                </p>
+                <ul className="text-left text-gray-600 mb-4">
+                  {property.features.split(",").map((feature, i) => (
+                    <li key={i}>{feature.trim()}</li>
+                  ))}
+                </ul>
 
-              <div className="mt-auto">
-                <button
-                  className="bg-blue-700 text-white py-2 px-6 rounded-lg hover:bg-blue-800 mt-2"
-                  onClick={() =>
-                    setShowFormIndex(showFormIndex === index ? null : index)
-                  }
-                >
-                  Enquire Now
-                </button>
-
-                {showFormIndex === index && (
-                  <form
-                    className="mt-4 text-left"
-                    onSubmit={(e) => handleSubmit(e, property.id)}
+                <div className="mt-auto">
+                  <button
+                    className="bg-blue-700 text-white py-2 px-6 rounded-lg hover:bg-blue-800 mt-2"
+                    onClick={() =>
+                      setShowFormIndex(showFormIndex === index ? null : index)
+                    }
                   >
-                    <input
-                      type="text"
-                      placeholder="Your Name"
-                      required
-                      className="w-full border p-2 mb-2 rounded"
-                      value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                    />
-                    <input
-                      type="email"
-                      placeholder="Your Email"
-                      required
-                      className="w-full border p-2 mb-2 rounded"
-                      value={formData.email}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                    />
-                    <textarea
-                      placeholder="Message"
-                      required
-                      className="w-full border p-2 mb-2 rounded"
-                      value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
-                    />
-                    <button
-                      type="submit"
-                      className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 active:scale-95 transition-transform duration-100"
+                    Enquire Now
+                  </button>
+
+                  {showFormIndex === index && (
+                    <form
+                      className="mt-4 text-left"
+                      onSubmit={(e) => handleSubmit(e, property.id)}
                     >
-                      {loading ? "Submitting..." : "Submit Enquiry"}
-                    </button>
-                  </form>
-                )}
+                      <input
+                        type="text"
+                        placeholder="Your Name"
+                        required
+                        className="w-full border p-2 mb-2 rounded"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
+                      />
+                      <input
+                        type="email"
+                        placeholder="Your Email"
+                        required
+                        className="w-full border p-2 mb-2 rounded"
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                      />
+                      <textarea
+                        placeholder="Message"
+                        required
+                        className="w-full border p-2 mb-2 rounded"
+                        value={formData.message}
+                        onChange={(e) =>
+                          setFormData({ ...formData, message: e.target.value })
+                        }
+                      />
+                      <button
+                        type="submit"
+                        className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 active:scale-95 transition-transform duration-100"
+                      >
+                        {loading ? "Submitting..." : "Submit Enquiry"}
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
