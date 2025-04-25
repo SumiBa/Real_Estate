@@ -10,7 +10,7 @@ const PricingPlans = () => {
   });
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-  fetch("https://3589-65-2-130-99.ngrok-free.app/get_properties.php")
+  fetch("https://308e-65-2-130-99.ngrok-free.app/get_properties.php")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -35,7 +35,7 @@ const PricingPlans = () => {
     };
 
     try {
-      const response = await fetch("https://3589-65-2-130-99.ngrok-free.app/submit_enquiry.php", {
+      const response = await fetch("https://308e-65-2-130-99.ngrok-free.app/submit_enquiry.php", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
