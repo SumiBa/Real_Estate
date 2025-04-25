@@ -10,11 +10,20 @@ const PricingPlans = () => {
   });
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    fetch("https://3589-65-2-130-99.ngrok-free.app/get_properties.php")
-      .then((response) => response.json()) 
-      .then((data) => setProperties(data))
-      .catch((error) => console.error("Error fetching properties:", error));
-  }, []);
+  fetch("https://3589-65-2-130-99.ngrok-free.app/get_properties.php")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const contentType = response.headers.get("Content-Type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Expected JSON, but received " + contentType);
+      }
+      return response.json();
+    })
+    .then((data) => setProperties(data))
+    .catch((error) => console.error("Error fetching properties:", error));
+}, []);
 
   const handleSubmit = async (e, propertyId) => {
     e.preventDefault();
