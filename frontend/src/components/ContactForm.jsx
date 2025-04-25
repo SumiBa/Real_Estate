@@ -27,7 +27,7 @@ const ContactForm = () => {
         setErrorMessage("");
 
         try {
-            const response = await fetch("https://3589-65-2-130-99.ngrok-free.app/contact.php", {
+            const response = await fetch("https://308e-65-2-130-99.ngrok-free.app/contact.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded",
