@@ -8,7 +8,7 @@ const FloorPlan = () => {
 
         {/* Floor Plan Row: Displaying the 3 floor plans side by side */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
+          
           {/* Floor Plan 1: 2 BHK - 1200 sq ft */}
           <div className="relative flex flex-col items-center">
             <h3 className="text-xl font-semibold text-center mb-4">Floor Plan 1</h3> {/* Moved outside the image */}
