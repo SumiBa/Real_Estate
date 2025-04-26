@@ -15,7 +15,6 @@ const PricingPlans = () => {
     fetch("https://b795-65-2-31-39.ngrok-free.app/get_properties.php")
       .then((response) => response.json()) 
       .then((data) => setProperties(data))
-      .catch((error) => console.error("Error fetching properties:", error));
   }, []);
 
   const handleSubmit = async (e, propertyId) => {
