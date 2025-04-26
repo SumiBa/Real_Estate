@@ -12,24 +12,11 @@ const PricingPlans = () => {
   const [fetching, setFetching] = useState(true); // State for tracking fetch loading
 
  useEffect(() => {
-  fetch("https://b795-65-2-31-39.ngrok-free.app/get_properties.php")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log("Fetched Data: ", data); // Debug here to inspect the response
-      setProperties(data);
-    })
-    .catch((R) => {
-      console.error("Error fetching properties:", R.message || R); // Logs the error message
-      if (R.stack) {
-        console.error("Error stack:", R.stack); // Logs the stack trace if available
-      }
-    });
-}, []);
+    fetch("https://b795-65-2-31-39.ngrok-free.app/get_properties.php")
+      .then((response) => response.json()) 
+      .then((data) => setProperties(data))
+      .catch((error) => console.error("Error fetching properties:", error));
+  }, []);
 
   const handleSubmit = async (e, propertyId) => {
     e.preventDefault();
